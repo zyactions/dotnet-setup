@@ -1,0 +1,126 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
+
+      - name: 'TEST: Set up specific .NET SDK version'
+        id: setup-specific
+        uses: ./
+        with:
+          dotnet-version: '7.0.100'
+      - name: Verify Output
+        if: steps.setup-specific.outputs.dotnet-version != '7.0.100'
+        run: |
+          echo "Unexpected version:"
+          echo "${{ steps.setup-specific.outputs.dotnet-version }}"
+          exit 1
+      - name: Verify SDK
+        env:
+          VERSION_PRIMARY: '7.0.100'
+        shell: bash
+        run: |
+          bash test/verify-dotnet.sh "$VERSION_PRIMARY"
+      - name: Clean up
+        shell: bash
+        run: |
+          rm -rf "$DOTNET_ROOT"
+
+      - name: 'TEST: Set up multiple .NET SDK versions'
+        id: setup-multiple
+        uses: ./
+        with:
+          dotnet-version: |
+            7.0.100
+            6.0.401
+      - name: Verify Output
+        if: steps.setup-multiple.outputs.dotnet-version != '7.0.100'
+        run: |
+          echo "Unexpected version:"
+          echo "${{ steps.setup-multiple.outputs.dotnet-version }}"
+          exit 1
+      - name: Verify SDK
+        env:
+          VERSION_PRIMARY: '7.0.100'
+          VERSION_SECONDARY: '6.0.401'
+        shell: bash
+        run: |
+          bash test/verify-dotnet.sh "$VERSION_PRIMARY" "$VERSION_SECONDARY"
+      - name: Clean up
+        shell: bash
+        run: |
+          rm -rf "$DOTNET_ROOT"
+
+      - name: 'Create "global.json"'
+        shell: bash
+        run: |
+          cat <<EOT >> global.json
+          {
+            "sdk": {
+              "version": "6.0.401"
+            }
+          }
+          EOT
+
+      - name: 'TEST: Read .NET SDK version from "global.json"'
+        id: setup-global-json
+        uses: ./
+      - name: Verify Output
+        if: steps.setup-global-json.outputs.dotnet-version != '6.0.401'
+        run: |
+          echo "Unexpected version:"
+          echo "${{ steps.setup-global-json.outputs.dotnet-version }}"
+          exit 1
+      - name: Verify SDK
+        env:
+          VERSION_PRIMARY: '6.0.401'
+        shell: bash
+        run: |
+          bash test/verify-dotnet.sh "$VERSION_PRIMARY"
+      - name: Clean up
+        shell: bash
+        run: |
+          rm -rf "$DOTNET_ROOT"
+
+      - name: 'TEST: Read .NET SDK version from "global.json" and input'
+        id: setup-global-json-extra
+        uses: ./
+        with:
+          dotnet-version: '7.0.100'
+          global-json-file: ./global.json
+      - name: Verify Output
+        if: steps.setup-global-json-extra.outputs.dotnet-version != '6.0.401'
+        run: |
+          echo "Unexpected version:"
+          echo "${{ steps.setup-global-json-extra.outputs.dotnet-version }}"
+          exit 1
+      - name: Verify SDK
+        env:
+          VERSION_PRIMARY: '6.0.401'
+          VERSION_SECONDARY: '7.0.100'
+        shell: bash
+        run: |
+          bash test/verify-dotnet.sh "$VERSION_PRIMARY" "$VERSION_SECONDARY"
+      - name: Clean up
+        shell: bash
+        run: |
+          rm -rf "$DOTNET_ROOT"

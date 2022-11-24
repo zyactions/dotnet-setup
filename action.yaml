@@ -1,0 +1,70 @@
+name: 'ZyAction: .NET Setup'
+
+author: Florian Bernd
+description: Sets up a specific version of the .NET SDK.
+
+branding:
+  icon: play-circle
+  color: blue
+
+inputs:
+  dotnet-version:
+    description: >
+      Optional SDK version(s) to use. If not provided, will install 'global.json' version when available.
+      Supports multi-line strings.
+    type: string
+    required: false
+    default: ''
+  dotnet-quality:
+    description: >
+      Sets up the action to install the latest build of the specified quality in the channel.
+
+      Possible values: 
+      - daily
+      - signed
+      - validated
+      - preview
+      - ga
+    type: string
+    required: false
+    default: ''
+  global-json-file:
+    description: Optional 'global.json' location, if the 'global.json' isn't located in the root of the repo.
+    type: string
+    required: false
+    default: ''
+  problem-matcher:
+    description: Registers the default .NET problem matcher.
+    type: boolean
+    required: false
+    default: true
+
+outputs:
+  dotnet-version:
+    description: Contains the installed by action .NET SDK version for reuse.
+    value: ${{ steps.setup.outputs.dotnet-version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Setup .NET
+      id: setup
+      uses: actions/setup-dotnet@v3.0.3
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+        dotnet-quality: ${{ inputs.dotnet-quality }}
+        global-json-file: ${{ inputs.global-json-file }}
+
+    - name: Configure Environment
+      shell: bash
+      run: |
+        echo "DOTNET_NOLOGO=1" >> $GITHUB_ENV
+        echo "DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1" >> $GITHUB_ENV
+        echo "DOTNET_CLI_TELEMETRY_OPTOUT=1" >> $GITHUB_ENV
+        echo "DOTNET_GENERATE_ASPNET_CERTIFICATE=0" >> $GITHUB_ENV
+
+    - name: Disable Problem Matcher
+      if: inputs.problem-matcher != 'true'
+      shell: bash
+      run: |
+        echo "::remove-matcher owner=csc::"
