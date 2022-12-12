@@ -17,7 +17,7 @@ A GitHub Action to set up a specific version of the .NET SDK in a workflow run.
 
 > **Note**
 >
-> This action mainly provides a wrapper around the official [setup-dotnet][action-setup-dotnet] action with a few additional quality-of-life improvements.
+> This action mainly provides a wrapper around the official [actions/setup-dotnet][actions-setup-dotnet] action with a few additional quality-of-life improvements.
 
 ## Usage
 
@@ -93,7 +93,7 @@ Allows to specify the location of the `global.json`, if it isn't located in the 
 
 ### `problem-matcher`
 
-Wheather to use the .NET problem matcher. The default problem matcher is automatically registered by the wrapped [setup-dotnet][action-setup-dotnet] action. Setting `problem-matcher` to `false` will unregister it.
+Wheather to use the .NET problem matcher. The default problem matcher is automatically registered by the wrapped [actions/setup-dotnet][actions-setup-dotnet] action. Setting `problem-matcher` to `false` will unregister it.
 
 ## Outputs
 
@@ -105,7 +105,7 @@ The `dotnet-version` output contains the .NET SDK version installed by the actio
 
 This action does use the following official GitHub Actions dependencies:
 
-- [setup-dotnet][action-setup-dotnet]
+- [actions/setup-dotnet][actions-setup-dotnet]
 
 ## Versioning
 
@@ -115,7 +115,7 @@ Versions follow the [semantic versioning scheme][semver].
 
 .NET Setup Action is licensed under the MIT license.
 
-[action-setup-dotnet]: https://github.com/actions/setup-dotnet
+[actions-setup-dotnet]: https://github.com/actions/setup-dotnet
 [dotnet-sdk]: https://github.com/dotnet/sdk
 [job-runs-on]: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 [problem-matchers]: https://github.com/actions/runner/blob/main/docs/adrs/0276-problem-matchers.md
