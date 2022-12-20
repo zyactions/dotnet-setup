@@ -23,6 +23,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Remove all preinstalled .NET SDKs
+        shell: bash
+        run: |
+          "$GITHUB_WORKSPACE/test/cleanup.sh"
+
       - name: 'TEST: Set up specific .NET SDK version'
         id: setup-specific
         uses: ./
@@ -43,7 +48,7 @@ jobs:
       - name: Clean up
         shell: bash
         run: |
-          rm -rf "$DOTNET_ROOT"
+          "$GITHUB_WORKSPACE/test/cleanup.sh"
 
       - name: 'TEST: Set up multiple .NET SDK versions'
         id: setup-multiple
@@ -68,7 +73,7 @@ jobs:
       - name: Clean up
         shell: bash
         run: |
-          rm -rf "$DOTNET_ROOT"
+          "$GITHUB_WORKSPACE/test/cleanup.sh"
 
       - name: 'Create "global.json"'
         shell: bash
@@ -99,7 +104,7 @@ jobs:
       - name: Clean up
         shell: bash
         run: |
-          rm -rf "$DOTNET_ROOT"
+          "$GITHUB_WORKSPACE/test/cleanup.sh"
 
       - name: 'TEST: Read .NET SDK version from "global.json" and input'
         id: setup-global-json-extra
@@ -123,4 +128,4 @@ jobs:
       - name: Clean up
         shell: bash
         run: |
-          rm -rf "$DOTNET_ROOT"
+          "$GITHUB_WORKSPACE/test/cleanup.sh"
