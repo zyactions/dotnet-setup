@@ -26,7 +26,7 @@ A GitHub Action to set up a specific version of the .NET SDK in a workflow run.
 ```yaml
 steps:
   - name: .NET Setup
-    uses: zyactions/dotnet-setup@master
+    uses: zyactions/dotnet-setup@v1
     with:
       dotnet-version: '7.0.0'
 ```
@@ -36,7 +36,7 @@ steps:
 ```yaml
 steps:
   - name: .NET Setup
-    uses: zyactions/dotnet-setup@master
+    uses: zyactions/dotnet-setup@v1
     with:
       dotnet-version: |
         7.0.x
@@ -48,7 +48,7 @@ steps:
 ```yaml
 steps:
   - name: .NET Setup
-    uses: zyactions/dotnet-setup@master
+    uses: zyactions/dotnet-setup@v1
     with:
       global-json-file: ./global.json
 ```
@@ -119,7 +119,7 @@ Versions follow the [semantic versioning scheme][semver].
 [dotnet-sdk]: https://github.com/dotnet/sdk
 [job-runs-on]: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 [problem-matchers]: https://github.com/actions/runner/blob/main/docs/adrs/0276-problem-matchers.md
-[semver]:https://semver.org
+[semver]: https://semver.org
 [shield-license-mit]: https://img.shields.io/badge/License-MIT-blue.svg
 [shield-ci]: https://github.com/zyactions/dotnet-setup/actions/workflows/ci.yml/badge.svg
 [shield-platform-ubuntu]: https://img.shields.io/badge/Ubuntu-E95420?logo=ubuntu\&logoColor=white
